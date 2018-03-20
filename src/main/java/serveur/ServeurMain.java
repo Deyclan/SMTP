@@ -7,11 +7,13 @@ import java.net.Socket;
 public class ServeurMain {
 
     public static void main(String[] args) {
+        System.out.println("Quel serveur voulez-vous lancer ? \n - ait.com \n - gstaad.fr");
+
         try {
             ServerSocket serverSocket = new ServerSocket(25);
             while(!serverSocket.isClosed()){
                 Socket socket = serverSocket.accept();
-                new Thread(new Connexion(socket)).start();
+                new Thread(new Connexion(socket,"ait.com")).start();
             }
         } catch (IOException e) {
             e.printStackTrace();
