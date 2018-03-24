@@ -174,7 +174,7 @@ public class MailController extends Observable implements Initializable {
         console.setWrapText(true);
     }
 
-    public void log(String string) {
+    public void log(final String string) {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {

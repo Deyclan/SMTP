@@ -1,8 +1,6 @@
 package serveurPOP3;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
+import data.ConnexionMySQL;
 import data.Mail;
 import helpers.ConsoleApp;
 import helpers.ConsoleColor;
@@ -10,9 +8,10 @@ import helpers.ConsoleColor;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.lang.reflect.Type;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,10 +29,9 @@ public class ServerPOP3 extends ConsoleApp {
 
     public static void main(String[] args) {
 
-        Gson gson = new Gson();
         users = new HashMap<>();
         boitesMail = new HashMap<>();
-        initData(gson);
+        initData();
 
         try {
             ConsoleApp.setConsoleColor(ConsoleColor.ANSI_RED);
@@ -43,7 +41,7 @@ public class ServerPOP3 extends ConsoleApp {
             serverSocket.setEnabledCipherSuites(factory.getSupportedCipherSuites());
             ConsoleApp.log("InetAddress : " + serverSocket.getInetAddress(), ConsoleColor.ANSI_RED);
             ConsoleApp.log("Port :" + serverSocket.getLocalPort(), ConsoleColor.ANSI_RED);
-            ConsoleApp.log("Waiting for clientSMTP ... ");
+            ConsoleApp.log("Waiting for client ... ");
 
             while (true) {
                 SSLSocket inputClientSocket = (SSLSocket) serverSocket.accept();
@@ -56,20 +54,60 @@ public class ServerPOP3 extends ConsoleApp {
         }
     }
 
-    private static void initData(Gson gson) {
-                try {
-                    FileReader file = new FileReader("src/data/database.json");
-                    JsonObject json = gson.fromJson(file, JsonObject.class);
-                    // Users
-                    Type usersType = new TypeToken<Map<String, String>>() {
-            }.getType();
-            users = gson.fromJson(json.get("users").getAsJsonObject(), usersType);
+    private static void initData() {
+        try {
+            Connection connection = ConnexionMySQL.getConnexion();
 
-            // Boites mail
-            Type boitesMailType = new TypeToken<Map<String, Map<Integer, Mail>>>() {
-            }.getType();
-            boitesMail = gson.fromJson(json.get("boitesMail").getAsJsonObject(), boitesMailType);
-        } catch (FileNotFoundException e) {
+            Map<String, String> jointure = new HashMap<>();
+
+            // Récupérer les infos de la table user
+            Statement statementUser = connection.createStatement();
+            String sqlUser = ("SELECT * FROM user;");
+            ResultSet resultSetUser = statementUser.executeQuery(sqlUser);
+
+            while (resultSetUser.next()) {
+                String nom = resultSetUser.getString("nom");
+                String password = resultSetUser.getString("password");
+                String mail = resultSetUser.getString("mail");
+
+                users.put(nom, password);
+                jointure.put(mail, nom);
+            }
+
+            // Récupérer les infos de la table mail
+            Statement statementMail = connection.createStatement();
+            String sqlMail = ("SELECT * FROM mail;");
+            ResultSet resultSetMail = statementMail.executeQuery(sqlMail);
+
+            while (resultSetMail.next()) {
+                String mailUser = resultSetMail.getString("mailUser");
+                String from = resultSetMail.getString("expediteur");
+                String to = resultSetMail.getString("destinataire");
+                String subject = resultSetMail.getString("subject");
+                String date = resultSetMail.getString("dateMail");
+                String message_id = resultSetMail.getString("message_id");
+                String content = resultSetMail.getString("content");
+                int num = resultSetMail.getInt("num");
+
+                Mail mail = new Mail();
+                mail.setFrom(from);
+                mail.setTo(to);
+                mail.setSubject(subject);
+                mail.setDate(date);
+                mail.setMessage_id(message_id);
+                mail.setContent(content);
+
+                String nomUser = jointure.get(mailUser);
+                if (boitesMail.get(nomUser) == null) {
+                    Map<Integer, Mail> ligneMail = new HashMap<>();
+                    ligneMail.put(num, mail);
+                    boitesMail.put(nomUser, ligneMail);
+                } else {
+                    boitesMail.get(nomUser).put(num, mail);
+                }
+            }
+
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
