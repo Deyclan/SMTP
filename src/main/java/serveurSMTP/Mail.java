@@ -1,4 +1,4 @@
-package serveur;
+package serveurSMTP;
 
 import java.util.List;
 import java.util.stream.Collectors;

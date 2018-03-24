@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="clientPOP3.GUI.MailController">
+    <children>
+        <Pane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: aliceblue;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <Label layoutX="26.0" layoutY="147.0" text="Adresse hôte :" />
+                <Label layoutX="73.0" layoutY="172.0" text="Port :" />
+                <TextField fx:id="hostAdress" layoutX="105.0" layoutY="143.0" prefHeight="25.0" prefWidth="134.0" promptText="Adresse IP " />
+                <TextField fx:id="port" layoutX="105.0" layoutY="168.0" prefHeight="25.0" prefWidth="134.0" promptText="N° de port" />
+                <Button fx:id="connectBtn" layoutX="246.0" layoutY="155.0" mnemonicParsing="false" onAction="#connect" text="Connexion" />
+                <TextArea fx:id="console" editable="false" layoutX="357.0" layoutY="98.0" prefHeight="288.0" prefWidth="229.0" />
+                <Label layoutX="41.0" layoutY="271.0" text="Utilisateur :" />
+                <TextField fx:id="userName" layoutX="105.0" layoutY="267.0" prefHeight="25.0" prefWidth="134.0" promptText="Identifiant" />
+                <Label layoutX="70.0" layoutY="296.0" text="Mdp :" />
+            <PasswordField fx:id="password" layoutX="105.0" layoutY="292.0" prefHeight="25.0" prefWidth="134.0" promptText="Mot de passe" />
+                <Button fx:id="loginBtn" layoutX="246.0" layoutY="279.0" mnemonicParsing="false" onAction="#login" text="Authentification" />
+                <Label alignment="CENTER" layoutX="184.0" layoutY="32.0" style="-fx-background-color: transparent;" text="Connexion aux mails">
+                    <font>
+                        <Font name="News Gothic" size="24.0" />
+                    </font>
+                </Label>
+            <Text fill="#6b6a6a" layoutX="34.0" layoutY="397.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Polytech Lyon - 4A INFO - IPC - TP POP3 - Groupe : Nathan JOLIVET, Julie MOUNIER, Brandon PIARD, Clément SERRANO">
+               <font>
+                  <Font size="10.0" />
+               </font>
+            </Text>
+            </children></Pane>
+    </children>
+</AnchorPane>

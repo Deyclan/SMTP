@@ -1,0 +1,87 @@
+{
+  "users": {
+    "Jean": "Pascal",
+    "Philippe": "Fric",
+    "Monfrere": "Gstaad"
+  },
+  "boitesMail": {
+    "Jean": {
+      "1": {
+        "from": "Julien <julien@gmail.com>",
+        "to": "Jean <jean@gmail.com>",
+        "subject": "Important",
+        "date": "Fri, 21 Nov 1997 09:55:06 -0600",
+        "message_id": "<j1@server.com>",
+        "content": "Jérome, tu as reçu les photos ?."
+      },
+      "2": {
+        "from": "Julien <julien@gmail.com>",
+        "to": "Jean <jean@gmail.com>",
+        "subject": "Plus important",
+        "date": "Fri, 22 Nov 1997 09:55:06 -0600",
+        "message_id": "<j2@server.com>",
+        "content": "Philippe, ramène ta fraise."
+      },
+      "3": {
+        "from": "Julien <julien@gmail.com>",
+        "to": "Jean <jean@gmail.com>",
+        "subject": "Encore plus important",
+        "date": "Fri, 28 Nov 1997 09:55:06 -0600",
+        "message_id": "<j3@server.com>",
+        "content": "Céline Dion."
+      }
+    },
+    "Philippe": {
+      "1": {
+        "from": "Julien <julien@gmail.com>",
+        "to": "Philippe <philippe@gmail.com>",
+        "subject": "Cachette",
+        "date": "Fri, 23 Nov 1997 09:55:06 -0600",
+        "message_id": "<p1@server.com>",
+        "content": "Je sais où tu te caches."
+      },
+      "2": {
+        "from": "Julien <julien@gmail.com>",
+        "to": "Philippe <philippe@gmail.com>",
+        "subject": "Pognon",
+        "date": "Fri, 24 Nov 1997 09:55:06 -0600",
+        "message_id": "<p2@server.com>",
+        "content": "Tous les deux on peut se faire du fric."
+      },
+      "3": {
+        "from": "Julien <julien@gmail.com>",
+        "to": "Philippe <philippe@gmail.com>",
+        "subject": "Noël",
+        "date": "Fri, 25 Dec 2017 09:50:06 -0600",
+        "message_id": "<p3@server.com>",
+        "content": "Les boules de Noël."
+      }
+    },
+    "Monfrere": {
+      "1": {
+        "from": "Julien <julien@gmail.com>",
+        "to": "Monfrere <monfrere@gmail.com",
+        "subject": "Chinois",
+        "date": "Fri, 25 Nov 1997 09:55:06 -0600",
+        "message_id": "<m1@server.com>",
+        "content": "Tu as tué mon frère à Gstaad"
+      },
+      "2": {
+        "from": "Julien <julien@gmail.com>",
+        "to": "Monfrere <monfrere@gmail.com>",
+        "subject": "Menace",
+        "date": "Fri, 26 Nov 1997 09:55:06 -0600",
+        "message_id": "<m2@server.com>",
+        "content": "Tu vas mourir"
+      },
+      "3": {
+        "from": "Julien <julien@gmail.com>",
+        "to": "Monfrere <monfrere@gmail.com>",
+        "subject": "Bye",
+        "date": "Fri, 29 Nov 1997 09:55:06 -0600",
+        "message_id": "<m3@server.com>",
+        "content": "Hasta la vista bye-bye."
+      }
+    }
+  }
+}

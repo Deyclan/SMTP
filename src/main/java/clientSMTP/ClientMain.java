@@ -1,4 +1,4 @@
-package client;
+package clientSMTP;
 
 public class ClientMain {
 

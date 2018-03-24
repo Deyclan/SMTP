@@ -1,6 +1,6 @@
 package helpers;
 
-public enum State {
+public enum StateSMTP {
 
     Debut("Début"),
     Attente("Attente"),
@@ -10,7 +10,7 @@ public enum State {
 
     private String value;
 
-    State(final String nom){
+    StateSMTP(final String nom){
         this.value = nom;
     }
 

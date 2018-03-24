@@ -1,6 +1,6 @@
 package helpers;
 
-public enum Event {
+public enum EventSTMP {
     EHLO("EHLO"),
     MAIL_FROM("MAIL FROM"),
     RCPT_TO("RCPT TO"),
@@ -10,7 +10,7 @@ public enum Event {
 
     private String value;
 
-    Event(final String nom){
+    EventSTMP(final String nom){
         this.value = nom;
     }
 
