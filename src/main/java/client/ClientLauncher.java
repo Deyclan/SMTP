@@ -1,4 +1,4 @@
-package clientPOP3;
+package client;
 
 import helpers.Constants;
 import javafx.application.Application;
@@ -12,7 +12,7 @@ public class ClientLauncher extends Application {
 
     static AnchorPane root;
     private FXMLLoader fxmlLoader;
-    private final URL loginURL = getClass().getResource("/clientPOP3/GUI/loginScreen.fxml");
+    private final URL loginURL = getClass().getResource("/client/GUI/loginScreen.fxml");
 
     public static void main(String[] args) {
         Application.launch(ClientLauncher.class, args);

@@ -1,6 +1,6 @@
-package clientPOP3.GUI;
+package client.GUI;
 
-import clientPOP3.ReceptionThread;
+import client.ReceptionThread;
 import helpers.Constants;
 import helpers.EventPOP3;
 import helpers.StatePOP3;
@@ -155,12 +155,12 @@ public class MailController extends Observable implements Initializable {
             if (event.getSource() == loginBtn) {
 
                 stage = (Stage) loginBtn.getScene().getWindow();
-                root = FXMLLoader.load(getClass().getResource("/clientPOP3/GUI/mailScreen.fxml"));
+                root = FXMLLoader.load(getClass().getResource("/client/GUI/mailScreen.fxml"));
 
 
             } else {
                 stage = (Stage) logoutBtn.getScene().getWindow();
-                root = FXMLLoader.load(getClass().getResource("/clientPOP3/GUI/loginScreen.fxml"));
+                root = FXMLLoader.load(getClass().getResource("/client/GUI/loginScreen.fxml"));
             }
             scene = new Scene(root);
             stage.setScene(scene);
