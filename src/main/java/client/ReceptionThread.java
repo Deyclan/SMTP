@@ -15,12 +15,12 @@ public class ReceptionThread implements Runnable {
     private MailController mailController;
     private EventPOP3 eventPOP3;
 
-    public ReceptionThread(MailController frameController, EventPOP3 eventPOP3){
+    public ReceptionThread(MailController frameController, EventPOP3 eventPOP3) {
         this.mailController = frameController;
         this.eventPOP3 = eventPOP3;
     }
 
-    public ReceptionThread(MailController mailController){
+    public ReceptionThread(MailController mailController) {
         this.mailController = mailController;
     }
 
@@ -44,16 +44,15 @@ public class ReceptionThread implements Runnable {
                     }
                     // DATA
                     else {
-                        if(!recievedString.equals(".")){
+                        if (!recievedString.equals(".")) {
                             mailController.log(recievedString);
-                        }
-                        else {
+                        } else {
                             mailController.log(recievedString);
                         }
                     }
                 }
             }
-        } catch(Exception e){
+        } catch (Exception e) {
             mailController.log("disconnected");
             mailController.setState(StatePOP3.AUTHORIZATION);
         }
@@ -62,6 +61,7 @@ public class ReceptionThread implements Runnable {
     public MailController getMailController() {
         return mailController;
     }
+
     public void setMailController(MailController mailController) {
         this.mailController = mailController;
     }
