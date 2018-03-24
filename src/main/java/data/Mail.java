@@ -1,11 +1,9 @@
-package serveurSMTP;
-
-import java.util.List;
-import java.util.stream.Collectors;
+package data;
 
 public class Mail {
+    private int num;
     private String from;
-    private List<String> to;
+    private String to;
     private String subject;
     private String date;
     private String message_id;
@@ -19,8 +17,12 @@ public class Mail {
         this.from = from;
     }
 
-    public List<String> getTo() {
+    public String getTo() {
         return to;
+    }
+
+    public void setTo(String to) {
+        this.to = to;
     }
 
     public String getSubject() {
@@ -55,11 +57,30 @@ public class Mail {
         this.content = content;
     }
 
+    public int getNum() {
+        return num;
+    }
+
+    public void setNum(int num) {
+        this.num = num;
+    }
+
+    public int getNbBytes() {
+        int res = 0;
+        res += from.getBytes().length
+                + to.getBytes().length
+                + subject.getBytes().length
+                + date.toString().getBytes().length
+                + message_id.getBytes().length
+                + content.getBytes().length;
+        return res;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("From: ").append(from).append("\n")
-                .append("To: ").append(to.stream().collect(Collectors.joining(";"))).append("\n")
+                .append("To: ").append(to).append("\n")
                 .append("Subject: ").append(subject).append("\n")
                 .append("Date: ").append(date.toString()).append("\n")
                 .append("Message-ID: ").append(message_id).append("\n\n")

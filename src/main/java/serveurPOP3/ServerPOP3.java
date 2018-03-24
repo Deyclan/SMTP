@@ -3,6 +3,7 @@ package serveurPOP3;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import data.Mail;
 import helpers.ConsoleApp;
 import helpers.ConsoleColor;
 
@@ -15,7 +16,7 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Server extends ConsoleApp {
+public class ServerPOP3 extends ConsoleApp {
 
     private static final int port = 1025;
     private static SSLServerSocket serverSocket;
@@ -56,11 +57,11 @@ public class Server extends ConsoleApp {
     }
 
     private static void initData(Gson gson) {
-        try {
-            FileReader file = new FileReader("src/data/database.json");
-            JsonObject json = gson.fromJson(file, JsonObject.class);
-            // Users
-            Type usersType = new TypeToken<Map<String, String>>() {
+                try {
+                    FileReader file = new FileReader("src/data/database.json");
+                    JsonObject json = gson.fromJson(file, JsonObject.class);
+                    // Users
+                    Type usersType = new TypeToken<Map<String, String>>() {
             }.getType();
             users = gson.fromJson(json.get("users").getAsJsonObject(), usersType);
 

@@ -1,5 +1,6 @@
 package serveurPOP3;
 
+import data.Mail;
 import helpers.ConsoleColor;
 import helpers.EventPOP3;
 import helpers.StatePOP3;

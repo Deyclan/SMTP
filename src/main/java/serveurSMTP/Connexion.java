@@ -1,10 +1,15 @@
 package serveurSMTP;
 
+import data.Mail;
 import helpers.EventSTMP;
 import helpers.StateSMTP;
 
 import java.io.*;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Connexion implements Runnable {
@@ -12,15 +17,18 @@ public class Connexion implements Runnable {
     private Socket socket;
     private BufferedReader in;
     private BufferedWriter out;
+    private Connection connection;
 
     private String etat;
     private String serveur;
 
     private List<String> users;
 
-    public Connexion(Socket socket, String nomServeur) {
+    public Connexion(Socket socket, String nomServeur, Connection connection, List<String> users) {
         this.socket = socket;
         this.serveur = nomServeur;
+        this.connection = connection;
+        this.users = users;
         this.etat = StateSMTP.Debut.toString();
         try {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -37,6 +45,10 @@ public class Connexion implements Runnable {
 
             String messageRecu;
             Mail mail = new Mail();
+
+            List<Mail> mailsToMany = new ArrayList<>();
+            mailsToMany.add(mail);
+
             while (!socket.isClosed()) {
                 if ((messageRecu = in.readLine()) != null) {
 
@@ -70,19 +82,26 @@ public class Connexion implements Runnable {
                         case RCPT_TO:
                             switch (StateSMTP.valueOf(etat)) {
                                 case Mail_cree:
-                                    if(users.contains(elementsMessage[2])){
+                                    if (users.contains(elementsMessage[2])) {
                                         etat = StateSMTP.Destinataire_attribue.toString();
-                                        mail.getTo().add(elementsMessage[2]);
+                                        if (mail.getTo() == null) {
+                                            mail.setTo(elementsMessage[2]);
+                                        } else {
+                                            Mail mailTmp = new Mail();
+                                            mailTmp.setTo(elementsMessage[2]);
+                                            mailsToMany.add(mailTmp);
+                                        }
+
                                         write("250 OK");
-                                    }else{
+                                    } else {
                                         write("550 No such user");
                                     }
                                     break;
                                 case Destinataire_attribue:
-                                    if(users.contains(elementsMessage[2])){
+                                    if (users.contains(elementsMessage[2])) {
                                         write("250 OK");
-                                        mail.getTo().add(elementsMessage[2]);
-                                    }else{
+                                        mail.setTo(elementsMessage[2]);
+                                    } else {
                                         write("550 No such user");
                                     }
                                     break;
@@ -146,8 +165,36 @@ public class Connexion implements Runnable {
                         default:
                             switch (StateSMTP.valueOf(etat)) {
                                 case Ecriture_mail:
-                                    // Ecriture dans le JSON
+                                    if (!messageRecu.equals(".")) {
+                                        mail.setContent(mail.getContent() + messageRecu + "\n");
+                                    } else {
+                                        for (Mail iterMail : mailsToMany) {
+                                            if (iterMail != mail) {
+                                                iterMail.setFrom(mail.getFrom());
+                                                iterMail.setContent(mail.getContent());
+                                                iterMail.setDate(mail.getDate());
+                                                iterMail.setMessage_id(mail.getMessage_id());
+                                                iterMail.setSubject(mail.getSubject());
+                                            }
 
+                                            // Insertion dans mysql
+                                            try {
+                                                Statement statement = connection.createStatement();
+                                                String sql = "INSERT INTO mail (mailUser, expediteur, destinaitaire, subject, dateMail, content, num) VALUES ("
+                                                        + "'" + iterMail.getFrom() + "'" + ","
+                                                        + "'" + iterMail.getFrom() + "'" + ","
+                                                        + "'" + iterMail.getTo() + "'" + ","
+                                                        + "'" + iterMail.getSubject() + "'" + ","
+                                                        + "'" + iterMail.getDate() + "'" + ","
+                                                        + "'" + iterMail.getContent() + "'" + ","
+                                                        + "'" + iterMail.getNum() + "'" + ");";
+                                                statement.execute(sql);
+                                            } catch (SQLException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                        etat = StateSMTP.Attente.toString();
+                                    }
                                     break;
                                 default:
                                     write("500 Commande ignorée");
