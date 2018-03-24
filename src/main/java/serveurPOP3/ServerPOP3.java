@@ -47,7 +47,7 @@ public class ServerPOP3 extends ConsoleApp {
 
             while (true) {
                 SSLSocket inputClientSocket = (SSLSocket) serverSocket.accept();
-                ConsoleApp.log("clientPOP3 " + inputClientSocket.getInetAddress() + " connected.", ConsoleColor.ANSI_GREEN);
+                ConsoleApp.log("client " + inputClientSocket.getInetAddress() + " connected.", ConsoleColor.ANSI_GREEN);
 
                 new Thread(new Connexion(inputClientSocket, users, boitesMail)).start();
             }

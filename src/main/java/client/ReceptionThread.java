@@ -1,6 +1,6 @@
-package clientPOP3;
+package client;
 
-import clientPOP3.GUI.MailController;
+import client.GUI.MailController;
 import helpers.Constants;
 import helpers.EventPOP3;
 import helpers.StatePOP3;
