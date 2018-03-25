@@ -256,6 +256,6 @@ public class Connexion implements Runnable {
     private void write(String message) throws IOException {
         out.write(message + "\r\n");
         out.flush();
-        System.out.println("serveurPOP3 : " + message);
+        System.out.println("serveurSMTP : " + message);
     }
 }
