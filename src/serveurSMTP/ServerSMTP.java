@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class ServeurSMTP {
+public class ServerSMTP {
 
     public static void main(String[] args) {
 
@@ -32,6 +32,8 @@ public class ServeurSMTP {
             } else {
                 serverChoisi = "gstaad.fr";
             }
+
+            System.out.println("Connecté au serveur " + serverChoisi + ", attente d'une connexion cliente ...");
 
             Statement statement = connection.createStatement();
             String sql = ("SELECT * FROM serveur WHERE nom = '" + serverChoisi + "';");

@@ -9,16 +9,20 @@ import java.sql.SQLException;
  */
 public class ConnexionMySQL {
 
-    public static Connection getConnexion() {
-        String url = "jdbc:mysql://localhost:3306/ipc";
-        String username = "root";
-        String password = "";
+    private static Connection connection;
 
-        try {
-            Connection connection = DriverManager.getConnection(url, username, password);
-            return connection;
-        } catch (SQLException e){
-            throw new IllegalStateException("Cannot connect the database!", e);
+    public static Connection getConnexion() {
+        if(connection == null){
+            String url = "jdbc:mysql://localhost:3306/ipc";
+            String username = "root";
+            String password = "";
+
+            try {
+                connection = DriverManager.getConnection(url, username, password);
+            } catch (SQLException e){
+                throw new IllegalStateException("Cannot connect the database!", e);
+            }
         }
+        return connection;
     }
 }

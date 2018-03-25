@@ -57,6 +57,12 @@ public class Connexion implements Runnable {
 
             while (socket.isConnected()) {
                 if ((message = in.readLine()) != null) {
+                    // Refresh la boite mail si l'user est connecté
+                    if(user != ""){
+                        boitesMail = ServerPOP3.getBoitesMail();
+                        boiteMail = boitesMail.get(user);
+                    }
+
                     print(message);
 
                     String[] array = message.split(" ");

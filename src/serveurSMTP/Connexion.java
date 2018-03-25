@@ -7,6 +7,7 @@ import helpers.StateSMTP;
 import java.io.*;
 import java.net.Socket;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ public class Connexion implements Runnable {
     private BufferedWriter out;
     private Connection connection;
 
-    private String etat;
+    private StateSMTP etat;
     private String serveur;
 
     private List<String> users;
@@ -29,7 +30,7 @@ public class Connexion implements Runnable {
         this.serveur = nomServeur;
         this.connection = connection;
         this.users = users;
-        this.etat = StateSMTP.Debut.toString();
+        this.etat = StateSMTP.Debut;
         try {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
@@ -52,14 +53,17 @@ public class Connexion implements Runnable {
             while (!socket.isClosed()) {
                 if ((messageRecu = in.readLine()) != null) {
 
+                    System.out.println("client : " + messageRecu);
+
                     String[] elementsMessage = messageRecu.split(" ");
                     String evenement = recupEvenement(elementsMessage);
 
-                    switch (EventSTMP.valueOf(evenement)) {
+                    EventSTMP event = EventSTMP.parse(evenement);
+                    switch (event) {
                         case EHLO:
-                            switch (StateSMTP.valueOf(etat)) {
+                            switch (etat) {
                                 case Debut:
-                                    etat = StateSMTP.Attente.toString();
+                                    etat = StateSMTP.Attente;
                                     write("250 " + serveur);
                                     break;
                                 default:
@@ -68,10 +72,10 @@ public class Connexion implements Runnable {
                             }
                             break;
                         case MAIL_FROM:
-                            switch (StateSMTP.valueOf(etat)) {
+                            switch (etat) {
                                 case Attente:
                                     mail.setFrom(elementsMessage[2]);
-                                    etat = StateSMTP.Ecriture_mail.toString();
+                                    etat = StateSMTP.Mail_cree;
                                     write("250 OK");
                                     break;
                                 default:
@@ -80,10 +84,10 @@ public class Connexion implements Runnable {
                             }
                             break;
                         case RCPT_TO:
-                            switch (StateSMTP.valueOf(etat)) {
+                            switch (etat) {
                                 case Mail_cree:
                                     if (users.contains(elementsMessage[2])) {
-                                        etat = StateSMTP.Destinataire_attribue.toString();
+                                        etat = StateSMTP.Destinataire_attribue;
                                         if (mail.getTo() == null) {
                                             mail.setTo(elementsMessage[2]);
                                         } else {
@@ -111,9 +115,9 @@ public class Connexion implements Runnable {
                             }
                             break;
                         case DATA:
-                            switch (StateSMTP.valueOf(etat)) {
+                            switch (etat) {
                                 case Destinataire_attribue:
-                                    etat = StateSMTP.Ecriture_mail.toString();
+                                    etat = StateSMTP.Ecriture_mail;
                                     write("354");
                                     break;
                                 default:
@@ -122,7 +126,7 @@ public class Connexion implements Runnable {
                             }
                             break;
                         case RST:
-                            switch (StateSMTP.valueOf(etat)) {
+                            switch (etat) {
                                 case Attente:
                                     reset();
                                     break;
@@ -141,7 +145,7 @@ public class Connexion implements Runnable {
                             }
                             break;
                         case QUIT:
-                            switch (StateSMTP.valueOf(etat)) {
+                            switch (etat) {
                                 case Debut:
                                     quit();
                                     break;
@@ -163,10 +167,18 @@ public class Connexion implements Runnable {
                             }
                             break;
                         default:
-                            switch (StateSMTP.valueOf(etat)) {
+                            switch (etat) {
                                 case Ecriture_mail:
                                     if (!messageRecu.equals(".")) {
-                                        mail.setContent(mail.getContent() + messageRecu + "\n");
+                                        if (mail.getSubject() == null) {
+                                            mail.setSubject(messageRecu);
+                                        } else {
+                                            if (mail.getContent() == null) {
+                                                mail.setContent(messageRecu + "\n");
+                                            } else {
+                                                mail.setContent(mail.getContent() + messageRecu + "\n");
+                                            }
+                                        }
                                     } else {
                                         for (Mail iterMail : mailsToMany) {
                                             if (iterMail != mail) {
@@ -177,23 +189,36 @@ public class Connexion implements Runnable {
                                                 iterMail.setSubject(mail.getSubject());
                                             }
 
-                                            // Insertion dans mysql
+
                                             try {
+                                                // On récupère le num max
+                                                Statement statementMaxNum = connection.createStatement();
+                                                String sqlMail = ("SELECT max(num) AS 'num' FROM mail WHERE mailUser = '" + iterMail.getTo() + "';");
+                                                ResultSet resultSetMail = statementMaxNum.executeQuery(sqlMail);
+
+                                                if (resultSetMail.next()) {
+                                                    int num = resultSetMail.getInt("num") + 1;
+                                                    iterMail.setNum(num);
+                                                    iterMail.setMessage_id("<" + iterMail.getTo().substring(0, 1).toLowerCase() + num + "@" + serveur + ">");
+                                                }
+
+                                                // Insertion dans mysql
                                                 Statement statement = connection.createStatement();
-                                                String sql = "INSERT INTO mail (mailUser, expediteur, destinaitaire, subject, dateMail, content, num) VALUES ("
-                                                        + "'" + iterMail.getFrom() + "'" + ","
+                                                String sql = "INSERT INTO mail (mailUser, expediteur, destinataire, subject, dateMail, content, num, message_id) VALUES ("
+                                                        + "'" + iterMail.getTo() + "'" + ","
                                                         + "'" + iterMail.getFrom() + "'" + ","
                                                         + "'" + iterMail.getTo() + "'" + ","
                                                         + "'" + iterMail.getSubject() + "'" + ","
                                                         + "'" + iterMail.getDate() + "'" + ","
                                                         + "'" + iterMail.getContent() + "'" + ","
-                                                        + "'" + iterMail.getNum() + "'" + ");";
+                                                        + "'" + iterMail.getNum() + "'" + ","
+                                                        + "'" + iterMail.getMessage_id() + "'" + ");";
                                                 statement.execute(sql);
                                             } catch (SQLException e) {
                                                 e.printStackTrace();
                                             }
                                         }
-                                        etat = StateSMTP.Attente.toString();
+                                        etat = StateSMTP.Attente;
                                     }
                                     break;
                                 default:
@@ -209,7 +234,7 @@ public class Connexion implements Runnable {
     }
 
     private void reset() throws IOException {
-        etat = StateSMTP.Attente.toString();
+        etat = StateSMTP.Attente;
         write("250 OK");
     }
 

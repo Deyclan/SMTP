@@ -27,6 +27,9 @@ public class ServerPOP3 extends ConsoleApp {
     //Tableau des utilisateurs et de leurs mails associés
     private static Map<String, Map<Integer, Mail>> boitesMail;
 
+    // Tableau permettant la jointure entre un user et sa boite mail
+    private static Map<String, String> jointure;
+
     public static void main(String[] args) {
 
         users = new HashMap<>();
@@ -58,7 +61,7 @@ public class ServerPOP3 extends ConsoleApp {
         try {
             Connection connection = ConnexionMySQL.getConnexion();
 
-            Map<String, String> jointure = new HashMap<>();
+            jointure = new HashMap<>();
 
             // Récupérer les infos de la table user
             Statement statementUser = connection.createStatement();
@@ -75,7 +78,21 @@ public class ServerPOP3 extends ConsoleApp {
             }
 
             // Récupérer les infos de la table mail
+            boitesMail = getBoitesMail();
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Map<String, Map<Integer, Mail>> getBoitesMail() {
+        try {
+            Map<String, Map<Integer, Mail>> boitesMail = new HashMap<>();
+
+            Connection connection = ConnexionMySQL.getConnexion();
             Statement statementMail = connection.createStatement();
+
             String sqlMail = ("SELECT * FROM mail;");
             ResultSet resultSetMail = statementMail.executeQuery(sqlMail);
 
@@ -106,10 +123,11 @@ public class ServerPOP3 extends ConsoleApp {
                     boitesMail.get(nomUser).put(num, mail);
                 }
             }
-
+            return boitesMail;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
 }
