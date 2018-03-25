@@ -1,6 +1,7 @@
 package client.GUI;
 
 import client.ReceptionThread;
+import client.SMTPMailSender;
 import helpers.Constants;
 import helpers.EventPOP3;
 import helpers.StatePOP3;
@@ -34,6 +35,7 @@ public class MailController extends Observable implements Initializable {
 
     private static SSLSocket socket;
     private static SSLSocketFactory factory;
+    //private static Socket socket;
     private static InputStream inputStream;
     private static OutputStream outputStream;
     public int messageNumber;
@@ -45,13 +47,13 @@ public class MailController extends Observable implements Initializable {
     private StatePOP3 state = StatePOP3.AUTHORIZATION;
 
     @FXML
-    private Button connectBtn, loginBtn, statBtn, retrBtn, logoutBtn;
+    private Button connectBtn, loginBtn, statBtn, retrBtn, logoutBtn, newMail, cancelNewMail;
     @FXML
-    private TextField hostAdress, port, userName, password, mailNb;
+    private TextField hostAdress, port, userName, password, mailNb, from, to, subject;
     @FXML
     private ListView mailList;
     @FXML
-    private TextArea console, mailContent;
+    private TextArea console, mailContent, newMailContent;
 
 
     @Override
@@ -72,6 +74,7 @@ public class MailController extends Observable implements Initializable {
             factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
             socket = (SSLSocket) factory.createSocket(InetAddress.getByName(getHostAdress()), Integer.parseInt(getPort()));
             socket.setEnabledCipherSuites(factory.getSupportedCipherSuites());
+            //socket = new Socket(getHostAdress(), Integer.parseInt(getPort()));
             log("Connected");
             inputStream = socket.getInputStream();
             outputStream = socket.getOutputStream();
@@ -149,16 +152,53 @@ public class MailController extends Observable implements Initializable {
         }
     }
 
+    @FXML
+    public void writeNewMail(ActionEvent event){
+        try {
+            changeScreens(event);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void cancelNewMail(ActionEvent event){
+        try{
+            changeScreens(event);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void sendNewMail(ActionEvent event){
+        try{
+            String from = this.from.getText();
+            String to = this.to.getText();
+            String content = this.subject.getText() +"\n"+ this.newMailContent.getText();
+            Platform.runLater(new SMTPMailSender(from,to, content));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
     private void changeScreens(ActionEvent event) {
         try {
             Stage stage;
             if (event.getSource() == loginBtn) {
-
                 stage = (Stage) loginBtn.getScene().getWindow();
                 root = FXMLLoader.load(getClass().getResource("/client/GUI/mailScreen.fxml"));
-
-
-            } else {
+            }
+            else if (event.getSource() == newMail){
+                stage = (Stage) newMail.getScene().getWindow();
+                root = FXMLLoader.load(getClass().getResource("/client/GUI/newMailScreen.fxml"));
+            }
+            else if (event.getSource() == cancelNewMail){
+                stage = (Stage) cancelNewMail.getScene().getWindow();
+                root = FXMLLoader.load(getClass().getResource("/client/GUI/mailScreen.fxml"));
+            }
+            else {
                 stage = (Stage) logoutBtn.getScene().getWindow();
                 root = FXMLLoader.load(getClass().getResource("/client/GUI/loginScreen.fxml"));
             }

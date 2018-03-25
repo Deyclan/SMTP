@@ -26,6 +26,7 @@
                 <Button fx:id="statBtn" layoutX="16.0" layoutY="69.0" mnemonicParsing="false" onAction="#statMailInfo" text="Informations" />
             <Button fx:id="retrBtn" layoutX="157.0" layoutY="114.0" mnemonicParsing="false" onAction="#retrieveMail" text="Afficher mail" />
             <TextField fx:id="mailNb" layoutX="16.0" layoutY="114.0" prefHeight="25.0" prefWidth="132.0" promptText="N° du mail à afficher" />
+            <Button fx:id="newMail" layoutX="16.0" layoutY="215.0" mnemonicParsing="false" onAction="#writeNewMail" text="Nouveau Mail" />
             </children>
         </Pane>
     </children>
