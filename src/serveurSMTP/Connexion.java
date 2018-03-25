@@ -218,6 +218,7 @@ public class Connexion implements Runnable {
                                                 e.printStackTrace();
                                             }
                                         }
+                                        write("250 OK");
                                         etat = StateSMTP.Attente;
                                     }
                                     break;
