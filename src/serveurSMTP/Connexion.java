@@ -63,8 +63,12 @@ public class Connexion implements Runnable {
                         case EHLO:
                             switch (etat) {
                                 case Debut:
-                                    etat = StateSMTP.Attente;
-                                    write("250 " + serveur);
+                                    if (serveur.equals(elementsMessage[1])) {
+                                        etat = StateSMTP.Attente;
+                                        write("250 " + serveur);
+                                    } else {
+                                        write("421 <" + elementsMessage[1] + "> unrecognized");
+                                    }
                                     break;
                                 default:
                                     write("500 Commande ignorée");
