@@ -40,10 +40,10 @@ public class SMTPMailSender implements Runnable {
                 String adresse;
                 switch (domaine){
                     case "ait.com":
-                        adresse = "127.0.0.1";
+                        adresse = "192.168.43.63";
                         break;
                     case "gstaad.fr":
-                        adresse = "127.0.0.1";
+                        adresse = "192.168.43.118";
                         break;
                     default:return;
                 }

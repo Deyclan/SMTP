@@ -45,7 +45,9 @@ public class SendToServer implements Runnable {
                 write("EHLO "+serverToJoin);
             }
             else {
-                // TODO : A completer
+                System.out.println("Error (EHLO). Message recieved :");
+                System.out.println(receptionString);
+                write("QUIT");
                 return;
             }
 
@@ -55,11 +57,13 @@ public class SendToServer implements Runnable {
              */
             receptionString = read();
             String[] serveurIdentification = receptionString.split(" ");
-            if (serveurIdentification.length > 1 && serveurIdentification[0].equals("250")){
+            if (serveurIdentification.length > 1 && serveurIdentification[1].equals(serverToJoin)){
                 write("MAIL FROM "+ from);
             }
             else {
-                // TODO : A completer
+                System.out.println("Error (MAIL FROM). Message recieved :");
+                System.out.println(receptionString);
+                write("QUIT");
                 return;
             }
 
@@ -67,32 +71,45 @@ public class SendToServer implements Runnable {
             /**
              * Emetteur mail Envoyé
              */
-            int destValidate = 0;
-            for (String dest: destList) {
-                write("RCPT TO "+dest);
-                receptionString = read();
-                String[] response = receptionString.split(" ");
-                if (response[0].equals("250")){
-                    destValidate++;
+            receptionString = read();
+            String[] repMailFrom = receptionString.split(" ");
+            if (repMailFrom.length > 1 && repMailFrom[0].equals("250")) {
+                int destValidate = 0;
+                for (String dest : destList) {
+                    write("RCPT TO " + dest);
+                    receptionString = read();
+                    String[] response = receptionString.split(" ");
+                    if (response[0].equals("250")) {
+                        destValidate++;
+                    }
                 }
-            }
-            if (destValidate == 0){
-                write("RSET");
-                // TODO : A completer
+                if (destValidate == 0) {
+                    write("RSET");
+                }
+            } else {
+                System.out.println("Error (RCPT TO sending). Message recieved :");
+                System.out.println(receptionString);
+                write("QUIT");
+                return;
             }
 
             // ------------------------------------------------------------------------------
             /**
              * Recepteurs mail envoyé
              */
+            /*
             receptionString = read();
             String[] reponsePostEnvoiRCPT = receptionString.split(" ");
             if (reponsePostEnvoiRCPT[0].equals("250")){
                 write("DATA");
             }else {
-                // TODO : A completer
+                System.out.println("Error (DATA). Message recieved :");
+                System.out.println(receptionString);
+                write("QUIT");
                 return;
             }
+            */
+            write("DATA");
 
             // ------------------------------------------------------------------------------
             /**
@@ -104,7 +121,9 @@ public class SendToServer implements Runnable {
                 write(mailContent);
                 write(".");
             }else {
-                // TODO : A completer
+                System.out.println("Error (data sending). Message recieved :");
+                System.out.println(receptionString);
+                write("QUIT");
                 return;
             }
 

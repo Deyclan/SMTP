@@ -41,7 +41,7 @@ public class MailController extends Observable implements Initializable {
     public int messageNumber;
     public Thread receptionThread;
     private AnchorPane root;
-    private Scene scene;
+    private static Scene scene;
     private String timbreADate;
 
     private StatePOP3 state = StatePOP3.AUTHORIZATION;
@@ -205,6 +205,8 @@ public class MailController extends Observable implements Initializable {
             scene = new Scene(root);
             stage.setScene(scene);
             stage.show();
+            console = (TextArea) scene.lookup("#console");
+            System.out.print("");
         } catch (Exception ex) {
             Logger.getLogger(MailController.class.getName()).log(Level.SEVERE, "Problème de connexion", ex);
         }
@@ -219,9 +221,15 @@ public class MailController extends Observable implements Initializable {
             @Override
             public void run() {
                 if (scene != null) {
-                    TextArea whereToLog = (TextArea) scene.lookup("#console");
-                    whereToLog.appendText(string);
-                    whereToLog.appendText("\n");
+                    if (console != null){
+                        console = (TextArea) scene.lookup("#console");
+                        console.appendText(string);
+                        console.appendText("\n");
+                    }else {
+                        TextArea whereToLog = (TextArea) scene.lookup("#console");
+                        whereToLog.appendText(string);
+                        whereToLog.appendText("\n");
+                    }
                 } else {
                     console.appendText(string);
                     console.appendText("\n");
