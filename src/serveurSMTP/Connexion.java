@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Connexion implements Runnable {
@@ -205,6 +206,8 @@ public class Connexion implements Runnable {
                                                     iterMail.setNum(num);
                                                     iterMail.setMessage_id("<" + iterMail.getTo().substring(0, 1).toLowerCase() + num + "@" + serveur + ">");
                                                 }
+
+                                                iterMail.setDate(new Date().toString());
 
                                                 // Insertion dans mysql
                                                 Statement statement = connection.createStatement();

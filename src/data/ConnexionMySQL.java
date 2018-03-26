@@ -13,7 +13,7 @@ public class ConnexionMySQL {
 
     public static Connection getConnexion() {
         if(connection == null){
-            String url = "jdbc:mysql://localhost:3306/ipc";
+            String url = "jdbc:mysql://192.168.43.63:3306/ipc";
             String username = "root";
             String password = "";
 

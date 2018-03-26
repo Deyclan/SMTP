@@ -86,6 +86,7 @@ public class Connexion implements Runnable {
                                                 sommeDeControle.getBytes()), StandardCharsets.UTF_8);
                                         if (passwordMD5.equals(pass)) {
                                             user = param;
+                                            boitesMail = ServerPOP3.getBoitesMail();
                                             boiteMail = boitesMail.get(user);
                                             writeAndPrint(out, "+OK " + user + " a " + boiteMail.size() + " messages.");
                                             etat = StatePOP3.TRANSACTION;
