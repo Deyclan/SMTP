@@ -92,15 +92,8 @@ public class Connexion implements Runnable {
                             switch (etat) {
                                 case Mail_cree:
                                     if (users.contains(elementsMessage[2])) {
+                                        mail.setTo(elementsMessage[2]);
                                         etat = StateSMTP.Destinataire_attribue;
-                                        if (mail.getTo() == null) {
-                                            mail.setTo(elementsMessage[2]);
-                                        } else {
-                                            Mail mailTmp = new Mail();
-                                            mailTmp.setTo(elementsMessage[2]);
-                                            mailsToMany.add(mailTmp);
-                                        }
-
                                         write("250 OK");
                                     } else {
                                         write("550 No such user");
@@ -108,8 +101,10 @@ public class Connexion implements Runnable {
                                     break;
                                 case Destinataire_attribue:
                                     if (users.contains(elementsMessage[2])) {
+                                        Mail mailTmp = new Mail();
+                                        mailTmp.setTo(elementsMessage[2]);
+                                        mailsToMany.add(mailTmp);
                                         write("250 OK");
-                                        mail.setTo(elementsMessage[2]);
                                     } else {
                                         write("550 No such user");
                                     }
