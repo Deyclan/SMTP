@@ -118,7 +118,7 @@ public class Connexion implements Runnable {
                             switch (etat) {
                                 case Destinataire_attribue:
                                     etat = StateSMTP.Ecriture_mail;
-                                    write("354");
+                                    write("354 Start Mail input");
                                     break;
                                 default:
                                     write("500 Commande ignorée");
